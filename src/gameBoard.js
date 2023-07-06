@@ -11,9 +11,12 @@ const gameBoard = {
     }
   },
   outOfBounds(pos) {
-    return pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7;
+    if (pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7) {
+      console.error("Out of bounds. Illegal placement of piece.");
+      return true;
+    }
   },
-  placePiece(piece, pos) {
+  placePiece(piece, pos, token) {
     const squares = this.gridContainer.getElementsByClassName("square");
 
     for (let i = 0; i < squares.length; i++) {
@@ -23,7 +26,20 @@ const gameBoard = {
       const targetColumn = parseInt(column);
 
       if (targetColumn === pos[0] && targetRow === pos[1]) {
-        square.textContent = piece.display;
+        switch (token) {
+          case "start":
+            square.textContent = piece.display.start;
+            break;
+          case "end":
+            square.textContent = piece.display.end;
+            break;
+          case "dest":
+            square.textContent = piece.display.dest;
+            break;
+          default:
+            console.error("Token not recognized.");
+        }
+        // square.textContent = piece.display;
         break;
       }
     }
