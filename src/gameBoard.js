@@ -16,6 +16,17 @@ const gameBoard = {
       return true;
     }
   },
+  clearDestinations(token, all = false) {
+    const squares = Array.from(
+      this.gridContainer.getElementsByClassName("square")
+    );
+    const filteredSquares = squares.filter((square) => {
+      return all || square.textContent === token;
+    });
+    filteredSquares.forEach((square) => {
+      square.textContent = "";
+    });
+  },
   placePiece(piece, pos, token) {
     const squares = this.gridContainer.getElementsByClassName("square");
 

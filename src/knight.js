@@ -19,7 +19,7 @@ const knight = {
   },
   getPossibleMoves(start, board) {
     const initialDestinations = [];
-    this.clearDestinations(board);
+    board.clearDestinations(this.display.dest);
 
     for (let move in this.movements) {
       const destination = start.map(
@@ -32,18 +32,6 @@ const knight = {
     }
     return initialDestinations;
   },
-  clearDestinations(board, all = false) {
-    const squares = Array.from(
-      board.gridContainer.getElementsByClassName("square")
-    );
-    const filteredSquares = squares.filter((square) => {
-      return all || square.textContent === this.display.dest;
-    });
-    filteredSquares.forEach((square) => {
-      square.textContent = "";
-    });
-  },
-
   searchMoveTree(destinations, board, endpoint) {
     //pass a reference to the recursive call to trace the path
     //of its endpoint
@@ -53,7 +41,7 @@ const knight = {
     for (let destination of destinations) {
       if (JSON.stringify(destination) === JSON.stringify(endpoint)) {
         console.log("Endpoint reached.");
-        this.clearDestinations(board, true);
+        board.clearDestinations(this.display.dest, true);
         board.placePiece(this, destination, "start");
         endPointReached = true;
         break;
