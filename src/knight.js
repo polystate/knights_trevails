@@ -17,12 +17,7 @@ const knight = {
     board.placePiece(this, start, "start");
     board.placePiece(this, end, "end");
   },
-  traverse() {
-    console.log("Traversing...");
-  },
   getPossibleMoves(start, board) {
-    //this function should only get the possibleMoves, traverse
-    //should not be added here
     const initialDestinations = [];
     this.clearDestinations(board);
 
@@ -37,14 +32,15 @@ const knight = {
     }
     return initialDestinations;
   },
-  clearDestinations(board) {
+  clearDestinations(board, all = false) {
     const squares = Array.from(
       board.gridContainer.getElementsByClassName("square")
     );
-    squares.forEach((square) => {
-      if (square.textContent === this.display.dest) {
-        square.textContent = "";
-      }
+    const filteredSquares = squares.filter((square) => {
+      return all || square.textContent === this.display.dest;
+    });
+    filteredSquares.forEach((square) => {
+      square.textContent = "";
     });
   },
 
@@ -57,6 +53,8 @@ const knight = {
     for (let destination of destinations) {
       if (JSON.stringify(destination) === JSON.stringify(endpoint)) {
         console.log("Endpoint reached.");
+        this.clearDestinations(board, true);
+        board.placePiece(this, destination, "start");
         endPointReached = true;
         break;
       }
@@ -65,9 +63,14 @@ const knight = {
     //break out of recursion
     if (endPointReached) return;
 
+    //get random new landing position
     const knightTraverse =
       destinations[Math.floor(Math.random() * destinations.length)];
-    board.placePiece(this, knightTraverse, "path");
+
+    //place knight-start at new landing position
+    board.placePiece(this, knightTraverse, "start");
+
+    //get new branch from landing position
     const newBranch = this.getPossibleMoves(knightTraverse, board);
 
     //recursive call
