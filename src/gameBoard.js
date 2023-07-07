@@ -12,7 +12,7 @@ const gameBoard = {
   },
   outOfBounds(pos) {
     if (pos[0] < 0 || pos[0] > 7 || pos[1] < 0 || pos[1] > 7) {
-      console.error("Out of bounds. Illegal placement of piece.");
+      // console.error("Out of bounds. Illegal placement of piece.");
       return true;
     }
   },
@@ -36,10 +36,12 @@ const gameBoard = {
           case "dest":
             square.textContent = piece.display.dest;
             break;
+          case "path":
+            square.textContent = piece.display.path;
+            break;
           default:
             console.error("Token not recognized.");
         }
-        // square.textContent = piece.display;
         break;
       }
     }

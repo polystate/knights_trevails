@@ -2,7 +2,7 @@ const knight = {
   speak() {
     console.log("I am a knight.");
   },
-  display: { start: "KNS", end: "KNE", dest: "X" },
+  display: { start: "KNS", end: "KNE", dest: "X", path: "P" },
   movements: {
     0: [-2, -1],
     1: [-1, -2],
@@ -13,12 +13,18 @@ const knight = {
     6: [-2, 1],
     7: [2, 1],
   },
-  moves(start, end, board) {
+  movePath(start, end, board) {
     board.placePiece(this, start, "start");
     board.placePiece(this, end, "end");
   },
+  traverse() {
+    console.log("Traversing...");
+  },
   getPossibleMoves(start, board) {
+    //this function should only get the possibleMoves, traverse
+    //should not be added here
     const initialDestinations = [];
+    this.clearDestinations(board);
 
     for (let move in this.movements) {
       const destination = start.map(
@@ -31,28 +37,43 @@ const knight = {
     }
     return initialDestinations;
   },
+  clearDestinations(board) {
+    const squares = Array.from(
+      board.gridContainer.getElementsByClassName("square")
+    );
+    squares.forEach((square) => {
+      if (square.textContent === this.display.dest) {
+        square.textContent = "";
+      }
+    });
+  },
 
   searchMoveTree(destinations, board, endpoint) {
+    //pass a reference to the recursive call to trace the path
+    //of its endpoint
+    let endPointReached = false;
+
     //base case
-    try {
-      destinations.forEach((destination) => {
-        if (JSON.stringify(destination) === JSON.stringify(endpoint)) {
-          console.log("Endpoint reached.");
-          throw "BreakLoopAndFunction";
-        }
-      });
-    } catch (error) {
-      if (error === "BreakLoopAndFunction") {
-        return;
+    for (let destination of destinations) {
+      if (JSON.stringify(destination) === JSON.stringify(endpoint)) {
+        console.log("Endpoint reached.");
+        endPointReached = true;
+        break;
       }
-      throw error;
     }
-    const startDest =
+
+    //break out of recursion
+    if (endPointReached) return;
+
+    const knightTraverse =
       destinations[Math.floor(Math.random() * destinations.length)];
-    const infiniteDest = this.getPossibleMoves(startDest, board);
+    board.placePiece(this, knightTraverse, "path");
+    const newBranch = this.getPossibleMoves(knightTraverse, board);
 
     //recursive call
-    this.searchMoveTree(infiniteDest, board, endpoint);
+    setTimeout(() => {
+      this.searchMoveTree(newBranch, board, endpoint);
+    }, 500);
   },
 };
 
